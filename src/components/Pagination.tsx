@@ -8,6 +8,7 @@ const Pagination: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
+
     useEffect(() => {
         const fetchTotalPages = async () => {
             const pages = await getTotalPages();
@@ -24,11 +25,16 @@ const Pagination: React.FC = () => {
 
     return (
         <div>
-            <button onClick={() => handlePageChange(1)}>First Page</button>
-            <button onClick={() => handlePageChange(currentPage - 1)}>Prev</button>
-            <button onClick={() => handlePageChange(currentPage)}>Page {currentPage}</button>
-            <button onClick={() => handlePageChange(currentPage + 1)}>Next</button>
-            <button onClick={() => handlePageChange(totalPages)}>Last Page</button>
+            <div>
+                <button onClick={() => handlePageChange(1)}>First Page</button>
+                <button onClick={() => handlePageChange(currentPage - 1)}>Prev</button>
+                <button onClick={() => handlePageChange(currentPage)}>Page {currentPage}</button>
+                <button onClick={() => handlePageChange(currentPage + 1)}>Next</button>
+                <button onClick={() => handlePageChange(totalPages)}>Last Page</button>
+            </div>
+            <div>
+
+            </div>
         </div>
     );
 };

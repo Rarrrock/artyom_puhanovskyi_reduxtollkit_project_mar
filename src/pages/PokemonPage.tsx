@@ -1,10 +1,14 @@
 import React from 'react';
 import PokemonDetails from '../components/PokemonDetails';
+import { useSelector } from 'react-redux';
+import { selectPokemons } from '../features/pokemon/pokemonSlice';
 
-const PokemonPage = () => {
+const PokemonPage: React.FC = () => {
+    const pokemons = useSelector(selectPokemons);
+
     return (
         <div>
-            <PokemonDetails />
+            <PokemonDetails pokemons={pokemons} />
         </div>
     );
 };

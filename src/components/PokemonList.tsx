@@ -1,18 +1,6 @@
 import React from 'react';
-
-interface PokemonSprites {
-    front_default?: string;
-}
-
-interface Pokemon {
-    id: number;
-    name: string;
-    sprites?: PokemonSprites;
-}
-
-interface PokemonListProps {
-    pokemons: Pokemon[];
-}
+import { PokemonListProps } from "../models/types";
+import { Link } from 'react-router-dom';
 
 const PokemonList: React.FC<PokemonListProps> = ({ pokemons }) => {
     return (
@@ -22,16 +10,20 @@ const PokemonList: React.FC<PokemonListProps> = ({ pokemons }) => {
 
                 return (
                     <div key={pokemon.name} className="pokemon-item">
-                        <img
-                            src={imageUrl}
-                            alt={pokemon.name}
-                            className="pokemon-image"
-                            onError={(e) => {
-                                e.currentTarget.src = "/images/pokemon_def.jpg";
-                                console.error(`Failed to load image for ${pokemon.name} at ${imageUrl}`);
-                            }}
-                        />
-                        <p>{pokemon.name}</p>
+                        <Link to={`/pokemon/${pokemon.id}`}>
+                            <img
+                                src={imageUrl}
+                                alt={pokemon.name}
+                                className="pokemon-image"
+                                onError={(e) => {
+                                    e.currentTarget.src = "/images/pokemon_def.jpg";
+                                    console.error(`Failed to load image for ${pokemon.name} at ${imageUrl}`);
+                                }}
+                            />
+                        </Link>
+                        <Link to={`/pokemon/${pokemon.id}`}>
+                            <p>{pokemon.name}</p>
+                        </Link>
                     </div>
                 );
             })}

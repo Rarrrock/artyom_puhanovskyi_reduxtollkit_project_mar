@@ -4,12 +4,14 @@ import { useParams } from 'react-router-dom';
 import { getPokemonDetails, selectPokemonDetails } from '../features/pokemon/pokemonSlice';
 import { addFavorite, removeFavorite, selectFavorites } from '../features/favorites/favoritesSlice';
 import { useAppDispatch } from '../store/store';
+import {PokemonListProps} from "../models/types";
 
-const PokemonDetails = () => {
+const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const { id } = useParams();
     const dispatch = useAppDispatch();
     const favorites = useSelector(selectFavorites);
     const pokemonDetails = useSelector(selectPokemonDetails);
+    const pokemon = pokemons[0];
 
     const isFavorite = favorites.some(pokemon => pokemon.id === pokemonDetails?.id);
 
