@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom'; // Импорт useNavigate для навигации
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getPokemonDetails, selectPokemonDetails } from '../features/pokemon/pokemonSlice';
 import { addFavorite, removeFavorite, selectFavorites } from '../features/favorites/favoritesSlice';
 import { useAppDispatch } from '../store/store';
@@ -10,6 +10,7 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const { id } = useParams();
     const dispatch = useAppDispatch();
     const navigate = useNavigate(); // Хук для навигации
+    const location = useLocation(); // Хук для получения текущего URL
     const favorites = useSelector(selectFavorites);
     const pokemonDetails = useSelector(selectPokemonDetails);
     const pokemon = pokemons[0];
@@ -30,6 +31,14 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
         navigate('/favorites'); // Перенаправление на страницу Favorites
     };
 
+    const handleBackClick = () => {
+        navigate(-1); // Возвращение на предыдущую страницу
+    };
+
+    const handleHomeClick = () => {
+        navigate('/'); // Перенаправление на домашнюю страницу
+    };
+
     useEffect(() => {
         if (id) {
             dispatch(getPokemonDetails(Number(id)));
@@ -42,6 +51,7 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
 
     return (
         <div>
+            <button onClick={handleHomeClick}>Home</button>
             <h1>{pokemonDetails.name}</h1>
             <img src={pokemonDetails.sprites.front_default} alt={pokemonDetails.name} />
             <h2>Types:</h2>
@@ -61,6 +71,9 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
             </button>
             <div style={{ marginTop: '20px' }}>
                 <button onClick={handleFavoritesClick}>Favorites</button>
+            </div>
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+                <button onClick={handleBackClick}>Back</button>
             </div>
         </div>
     );
