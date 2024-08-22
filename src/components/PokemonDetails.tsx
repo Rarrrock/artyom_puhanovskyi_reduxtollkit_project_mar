@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Импорт useNavigate для навигации
 import { getPokemonDetails, selectPokemonDetails } from '../features/pokemon/pokemonSlice';
 import { addFavorite, removeFavorite, selectFavorites } from '../features/favorites/favoritesSlice';
 import { useAppDispatch } from '../store/store';
-import {PokemonListProps} from "../models/types";
+import { PokemonListProps } from "../models/types";
 
 const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const { id } = useParams();
     const dispatch = useAppDispatch();
+    const navigate = useNavigate(); // Хук для навигации
     const favorites = useSelector(selectFavorites);
     const pokemonDetails = useSelector(selectPokemonDetails);
     const pokemon = pokemons[0];
@@ -23,6 +24,10 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
                 dispatch(addFavorite(pokemonDetails));
             }
         }
+    };
+
+    const handleFavoritesClick = () => {
+        navigate('/favorites'); // Перенаправление на страницу Favorites
     };
 
     useEffect(() => {
@@ -54,6 +59,9 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
             <button onClick={handleFavoriteToggle}>
                 {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
+            <div style={{ marginTop: '20px' }}>
+                <button onClick={handleFavoritesClick}>Favorites</button>
+            </div>
         </div>
     );
 };
