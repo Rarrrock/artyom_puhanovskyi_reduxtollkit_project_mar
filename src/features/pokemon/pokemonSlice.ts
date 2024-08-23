@@ -1,12 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../store/store';
 import {fetchPokemons, fetchPokemonDetails, searchPokemonsByName, fetchPokemonDetailsByName} from '../../utils/api';
-
-interface PokemonState {
-    pokemons: any[];
-    pokemonDetails: any | null;
-    status: 'idle' | 'loading' | 'failed';
-}
+import {PokemonState} from "../../models/types";
 
 const initialState: PokemonState = {
     pokemons: [],

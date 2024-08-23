@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPokemonDetails, selectPokemonDetails } from '../features/pokemon/pokemonSlice';
 import { addFavorite, removeFavorite, selectFavorites } from '../features/favorites/favoritesSlice';
 import { useAppDispatch } from '../store/store';
 import { PokemonListProps } from "../models/types";
+import { getPokemonFormsByName} from "../features/pokemon/pokemonForms";
 
 const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const { id } = useParams();
@@ -12,6 +13,9 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const navigate = useNavigate(); // Хук для навигации
     const favorites = useSelector(selectFavorites);
     const pokemonDetails = useSelector(selectPokemonDetails);
+
+    // Локальное состояние для хранения форм покемона
+    const [pokemonForms, setPokemonForms] = useState<string[]>([]);
 
     // Проверка, находится ли покемон в избранном
     const isFavorite = favorites.some(pokemon => pokemon.id === pokemonDetails?.id);
@@ -52,6 +56,21 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
         }
     }, [dispatch, id]);
 
+    useEffect(() => {
+        const fetchForms = async () => {
+            if (pokemonDetails?.name) {
+                try {
+                    const forms = await getPokemonFormsByName(pokemonDetails.name);
+                    setPokemonForms(forms); // Устанавливаем формы в состояние
+                } catch (error) {
+                    console.error("Error fetching pokemon forms:", error);
+                }
+            }
+        };
+
+        fetchForms();
+    }, [pokemonDetails]);
+
     if (!pokemonDetails) {
         return <div>Loading...</div>;
     }
@@ -71,6 +90,12 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
             <ul>
                 {pokemonDetails.abilities.map((ability: any) => (
                     <li key={ability.ability.name}>{ability.ability.name}</li>
+                ))}
+            </ul>
+            <h2>Forms:</h2>
+            <ul>
+                {pokemonForms.map((form, index) => (
+                    <li key={index}>{form}</li>
                 ))}
             </ul>
             <button onClick={handleFavoriteToggle}>

@@ -19,6 +19,12 @@ export interface PaginationProps {
     onPageChange: (page: number) => void;
 }
 
+export interface PokemonState {
+    pokemons: any[];
+    pokemonDetails: any | null;
+    status: 'idle' | 'loading' | 'failed';
+}
+
 export interface EvolutionChain {
     species: {
         name: string;
