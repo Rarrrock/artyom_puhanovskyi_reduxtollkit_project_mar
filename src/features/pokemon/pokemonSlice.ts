@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../store/store';
-import { fetchPokemons, fetchPokemonDetails, searchPokemonsByName } from '../../utils/api';
+import {fetchPokemons, fetchPokemonDetails, searchPokemonsByName, fetchPokemonDetailsByName} from '../../utils/api';
 
 interface PokemonState {
     pokemons: any[];
@@ -26,6 +26,14 @@ export const getPokemonDetails = createAsyncThunk(
     'pokemon/fetchPokemonDetails',
     async (id: number) => {
         const response = await fetchPokemonDetails(id);
+        return response;
+    }
+);
+
+export const getPokemonDetailsByName = createAsyncThunk(
+    'pokemon/fetchPokemonDetailsByName',
+    async (name: string) => {
+        const response = await fetchPokemonDetailsByName(name);
         return response;
     }
 );
@@ -79,5 +87,6 @@ export const pokemonSlice = createSlice({
 
 export const selectPokemons = (state: RootState) => state.pokemon.pokemons;
 export const selectPokemonDetails = (state: RootState) => state.pokemon.pokemonDetails;
+
 
 export default pokemonSlice.reducer;

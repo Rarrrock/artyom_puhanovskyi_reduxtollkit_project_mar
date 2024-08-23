@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getPokemonDetails, selectPokemonDetails } from '../features/pokemon/pokemonSlice';
 import { addFavorite, removeFavorite, selectFavorites } from '../features/favorites/favoritesSlice';
 import { useAppDispatch } from '../store/store';
@@ -10,25 +10,32 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const { id } = useParams();
     const dispatch = useAppDispatch();
     const navigate = useNavigate(); // Хук для навигации
-    const location = useLocation(); // Хук для получения текущего URL
     const favorites = useSelector(selectFavorites);
     const pokemonDetails = useSelector(selectPokemonDetails);
-    const pokemon = pokemons[0];
 
+    // Проверка, находится ли покемон в избранном
     const isFavorite = favorites.some(pokemon => pokemon.id === pokemonDetails?.id);
 
+    // Функция для добавления или удаления покемона из избранного
     const handleFavoriteToggle = () => {
         if (pokemonDetails) {
             if (isFavorite) {
-                dispatch(removeFavorite(pokemonDetails.id));
+                dispatch(removeFavorite(pokemonDetails.id)); // Удаление из избранного по id
             } else {
-                dispatch(addFavorite(pokemonDetails));
+                // Добавление в избранное всей информации о покемоне
+                dispatch(addFavorite({
+                    id: pokemonDetails.id,
+                    name: pokemonDetails.name,
+                    sprites: pokemonDetails.sprites, // Добавляем изображения покемона
+                    types: pokemonDetails.types,
+                    abilities: pokemonDetails.abilities,
+                }));
             }
         }
     };
 
     const handleFavoritesClick = () => {
-        navigate('/favorites'); // Перенаправление на страницу Favorites
+        navigate('/favorites'); // Перенаправление на страницу FavoritesPage
     };
 
     const handleBackClick = () => {
@@ -67,7 +74,7 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
                 ))}
             </ul>
             <button onClick={handleFavoriteToggle}>
-                {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                {isFavorite ? 'Remove from FavoritesPage' : 'Add to FavoritesPage'}
             </button>
             <div style={{ marginTop: '20px' }}>
                 <button onClick={handleFavoritesClick}>Favorites</button>
