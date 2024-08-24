@@ -101,6 +101,12 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
                     <li key={ability.ability.name}>{ability.ability.name}</li>
                 ))}
             </ul>
+            <h2>Stats:</h2>
+            <ul>
+                {pokemonDetails.stats.map((stat: any) => (
+                    <li key={stat.stat.name}>{stat.stat.name}</li>
+                ))}
+            </ul>
             <h2>Forms:</h2>
             <ul>
                 {pokemonForms.map((form, index) => (
