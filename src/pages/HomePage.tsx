@@ -1,4 +1,3 @@
-// Home.tsx
 import React, { useState, useEffect } from 'react';
 import PokemonList from '../components/PokemonList';
 import Pagination from '../components/Pagination/Pagination';

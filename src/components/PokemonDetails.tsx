@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom'; // Импорт Link
 import { getPokemonDetails, selectPokemonDetails } from '../features/pokemon/pokemonSlice';
 import { addFavorite, removeFavorite, selectFavorites } from '../features/favorites/favoritesSlice';
 import { useAppDispatch } from '../store/store';
 import { PokemonListProps } from "../models/types";
-import { getPokemonFormsByName} from "../features/pokemon/pokemonForms";
+import { getPokemonFormsByName } from "../features/pokemon/pokemonForms";
+import { getPokemonIdByName} from "../features/pokemon/pokemonSlice";
 
 const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const { id } = useParams();
     const dispatch = useAppDispatch();
-    const navigate = useNavigate(); // Хук для навигации
+    const navigate = useNavigate();
     const favorites = useSelector(selectFavorites);
     const pokemonDetails = useSelector(selectPokemonDetails);
 
@@ -70,10 +71,18 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
 
         fetchForms();
     }, [pokemonDetails]);
-
     if (!pokemonDetails) {
         return <div>Loading...</div>;
     }
+
+    const handleFormClick = async (formName: string) => {
+        const formId = await getPokemonIdByName(formName); // Получаем ID формы покемона по его имени
+        if (formId) {
+            navigate(`/pokemon/${formId}`); // Переход к странице покемона по ID
+        } else {
+            console.error(`Could not find ID for form: ${formName}`);
+        }
+    };
 
     return (
         <div>
@@ -95,11 +104,13 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
             <h2>Forms:</h2>
             <ul>
                 {pokemonForms.map((form, index) => (
-                    <li key={index}>{form}</li>
+                    <li key={index}>
+                        <a href="#" onClick={() => handleFormClick(form)}>{form}</a> {/* Кликабельная ссылка для формы */}
+                    </li>
                 ))}
             </ul>
             <button onClick={handleFavoriteToggle}>
-                {isFavorite ? 'Remove from FavoritesPage' : 'Add to FavoritesPage'}
+                {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
             <div style={{ marginTop: '20px' }}>
                 <button onClick={handleFavoritesClick}>Favorites</button>

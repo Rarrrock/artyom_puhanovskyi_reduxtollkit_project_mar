@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from "react";
 
-const API_URL = 'https://pokeapi.co/api/v2';
+export const API_URL = 'https://pokeapi.co/api/v2';
 
 export const fetchPokemons = async (page: number) => {
     const response = await axios.get(`${API_URL}/pokemon`, {
@@ -60,3 +60,4 @@ export const goToCurrentPage = (handlePageChange: (newPage: number) => void, cur
 export const goToFavorites = (navigate: (path: string) => void) => () => navigate('/favorites');
 export const goToHome = (navigate: (path: string) => void) => () => navigate('/');
 export const goBack = (navigate: (delta: number) => void) => () => navigate(-1);
+
