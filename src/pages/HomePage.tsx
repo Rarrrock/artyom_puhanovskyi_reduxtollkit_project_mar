@@ -4,6 +4,7 @@ import Pagination from '../components/Pagination/Pagination';
 import BackPagination from '../components/Pagination/BackPagination';
 import FavoritesPagination from '../components/Pagination/FavoritesPagination';
 import { fetchPokemons, getTotalPages } from '../utils/api';
+import Search from "../components/Search";
 
 const HomePage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1); // Состояние текущей страницы
@@ -28,7 +29,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div>
-            {/* Компоненты отображаются в нужном порядке */}
+            <Search/>
             <BackPagination />
             <Pagination
                 currentPage={currentPage}
