@@ -1,35 +1,28 @@
 import React, { useState } from 'react';
-import { useAppDispatch } from '../store/store';
-import { searchPokemons } from '../features/pokemon/pokemonSlice';
-import { useNavigate } from 'react-router-dom'; // Импортируем hook для навигации
+import { useNavigate } from 'react-router-dom';
 
-const Search = () => {
+const Search: React.FC = () => {
     const [query, setQuery] = useState('');
-    const dispatch = useAppDispatch();
-    const navigate = useNavigate(); // Используем hook для навигации
+    const navigate = useNavigate();
 
-    // Функция обработки поиска при нажатии Enter
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (query.trim()) {
-            dispatch(searchPokemons(query)); // Отправка запроса на сервер
-            navigate(`/search?query=${query}`); // Перенаправление на страницу результатов поиска
-        }
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQuery(e.target.value);
+    };
+
+    const handleSearchClick = () => {
+        navigate(`/search?query=${query}`);
     };
 
     return (
-        <form onSubmit={handleSearch} className="search-form">
+        <div>
             <input
                 type="text"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search Pokémon..."
-                className="search-input"
+                onChange={handleInputChange}
+                placeholder="Search for a Pokemon"
             />
-            <button type="submit" className="search-button">
-                Search
-            </button>
-        </form>
+            <button onClick={handleSearchClick}>Search</button>
+        </div>
     );
 };
 

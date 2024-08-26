@@ -39,8 +39,37 @@ export const fetchPokemonDetailsByName = async (name: string) => {
 };
 
 export const searchPokemonsByName = async (query: string) => {
-    const response = await axios.get(`${API_URL}/pokemon/${query}`);
-    return response.data;
+    try {
+        const response = await axios.get(`${API_URL}/pokemon/${query}`);
+        // Возможно, API возвращает просто один покемон, а не список
+        return { results: [response.data] }; // Оборачиваем в массив, если это один объект
+    } catch (error) {
+        console.error('Failed to search Pokémon by name', error);
+        return { results: [] }; // Возвращаем пустой массив, если ошибка
+    }
+};
+
+export const searchPokemonsByType = async (type: string) => {
+    try {
+        const response = await axios.get(`${API_URL}/type/${type}`);
+        const pokemons = response.data.pokemon.map((entry: any) => entry.pokemon);
+        return pokemons;
+    } catch (error) {
+        console.error('Failed to search Pokémon by type', error);
+        return [];
+    }
+};
+
+// Функции поиска по способности
+export const searchPokemonsByAbility = async (ability: string) => {
+    try {
+        const response = await axios.get(`${API_URL}/ability/${ability}`);
+        const pokemons = response.data.pokemon.map((entry: any) => entry.pokemon);
+        return pokemons;
+    } catch (error) {
+        console.error('Failed to search Pokémon by ability', error);
+        return [];
+    }
 };
 
 // Функция для получения общего числа страниц

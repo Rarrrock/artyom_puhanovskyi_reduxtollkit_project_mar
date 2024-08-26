@@ -1,13 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { goBack } from '../../utils/api';
 
-const BackPagination = () => {
+const BackPagination: React.FC = () => {
     const navigate = useNavigate();
+
+    const handleGoBack = () => {
+        navigate(-1); // Переход на предыдущую страницу в истории
+    };
 
     return (
         <div>
-            <button onClick={goBack(navigate)}>Go Back</button>
+            <button onClick={handleGoBack}>Go Back</button>
         </div>
     );
 };

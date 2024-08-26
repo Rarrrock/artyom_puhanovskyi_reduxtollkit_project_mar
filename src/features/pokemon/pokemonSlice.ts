@@ -5,7 +5,7 @@ import {
     fetchPokemonDetails,
     searchPokemonsByName,
     fetchPokemonDetailsByName,
-    API_URL
+    API_URL, searchPokemonsByType, searchPokemonsByAbility
 } from '../../utils/api';
 import {EvolutionChain, Pokemon, PokemonState} from "../../models/types";
 import axios from "axios";
@@ -40,11 +40,58 @@ export const getPokemonDetailsByName = createAsyncThunk(
     }
 );
 
+// export const searchPokemons = createAsyncThunk(
+//     'pokemon/searchPokemons',
+//     async (query: string) => {
+//         const response = await searchPokemonsByName(query);
+//         return [response];  // Возвращаем в виде массива, чтобы соответствовать структуре данных
+//     }
+// );
+
 export const searchPokemons = createAsyncThunk(
     'pokemon/searchPokemons',
-    async (query: string) => {
-        const response = await searchPokemonsByName(query);
-        return [response];  // Возвращаем в виде массива, чтобы соответствовать структуре данных
+    async ({ query, type, ability, page }: { query: string; type: string; ability: string; page: number }) => {
+        console.log('Searching for:', { query, type, ability, page });
+        let filteredPokemons: Pokemon[] = [];
+
+        try {
+            if (query) {
+                // Поиск по имени
+                const response = await searchPokemonsByName(query);
+                console.log('Search by name response:', response);
+
+                // Убедитесь, что response содержит results и что это массив
+                if (Array.isArray(response.results)) {
+                    filteredPokemons = response.results.filter((pokemon: Pokemon) =>
+                        pokemon.name.toLowerCase().includes(query.toLowerCase())
+                    );
+                } else {
+                    console.error('Response does not contain results or results is not an array:', response);
+                }
+            } else if (type) {
+                // Поиск по типу
+                filteredPokemons = await searchPokemonsByType(type);
+                console.log('Search by type response:', filteredPokemons);
+            } else if (ability) {
+                // Поиск по способности
+                filteredPokemons = await searchPokemonsByAbility(ability);
+                console.log('Search by ability response:', filteredPokemons);
+            }
+
+            // Получаем данные о каждом найденном покемоне
+            const detailedPokemons = await Promise.all(
+                filteredPokemons.map(async (pokemon: Pokemon) => {
+                    const details = await fetchPokemonDetailsByName(pokemon.name);
+                    return details;
+                })
+            );
+
+            console.log('Detailed pokemons:', detailedPokemons);
+            return detailedPokemons;
+        } catch (error) {
+            console.error('Error in searchPokemons:', error);
+            return [];
+        }
     }
 );
 

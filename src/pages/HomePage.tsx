@@ -1,39 +1,38 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PokemonList from '../components/PokemonList';
 import Pagination from '../components/Pagination/Pagination';
 import BackPagination from '../components/Pagination/BackPagination';
 import FavoritesPagination from '../components/Pagination/FavoritesPagination';
-import { fetchPokemons, getTotalPages } from '../utils/api';
-import Search from "../components/Search";
+import { useAppDispatch, useAppSelector } from '../store/store';
+import { getPokemons, selectPokemons } from '../features/pokemon/pokemonSlice';
 
 const HomePage: React.FC = () => {
-    const [currentPage, setCurrentPage] = useState(1); // Состояние текущей страницы
-    const [pokemons, setPokemons] = useState([]); // Состояние для списка покемонов
-    const [totalPages, setTotalPages] = useState(0); // Состояние для общего количества страниц
+    const [currentPage, setCurrentPage] = useState(1);
+    const dispatch = useAppDispatch();
+    const pokemons = useAppSelector(selectPokemons);
+    const navigate = useNavigate(); // Use useNavigate for navigation
 
     useEffect(() => {
-        const fetchData = async () => {
-            // Получение общего количества страниц
-            const pages = await getTotalPages();
-            setTotalPages(pages);
-            // Получение покемонов для текущей страницы
-            const data = await fetchPokemons(currentPage);
-            setPokemons(data);
-        };
-        fetchData();
-    }, [currentPage]);
+        // Fetch pokemons for the current page
+        dispatch(getPokemons(currentPage));
+    }, [currentPage, dispatch]);
 
     const handlePageChange = (page: number) => {
-        setCurrentPage(page); // Изменение текущей страницы
+        setCurrentPage(page);
+    };
+
+    const handleSearchClick = () => {
+        navigate('/search'); // Navigate to the search page
     };
 
     return (
         <div>
-            <Search/>
+            <button onClick={handleSearchClick}>Go to Search</button>
             <BackPagination />
             <Pagination
                 currentPage={currentPage}
-                totalPages={totalPages}
+                totalPages={Math.ceil(2000 / 20)}
                 onPageChange={handlePageChange}
             />
             <FavoritesPagination />
@@ -41,7 +40,7 @@ const HomePage: React.FC = () => {
             <BackPagination />
             <Pagination
                 currentPage={currentPage}
-                totalPages={totalPages}
+                totalPages={Math.ceil(2000 / 20)}
                 onPageChange={handlePageChange}
             />
             <FavoritesPagination />

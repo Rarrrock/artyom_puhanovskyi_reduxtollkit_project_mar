@@ -84,9 +84,14 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
         }
     };
 
+    const handleSearchClick = () => {
+        navigate('/search'); // Navigate to the search page
+    };
+
     return (
         <div>
             <button onClick={handleHomeClick}>Home</button>
+            <button onClick={handleSearchClick}>Go to Search</button>
             <h1>{pokemonDetails.name}</h1>
             <img src={pokemonDetails.sprites.front_default} alt={pokemonDetails.name} />
             <h2>Types:</h2>
