@@ -1,4 +1,3 @@
-// src/models/types.ts
 export interface PokemonSprites {
     front_default?: string;
 }
@@ -24,7 +23,6 @@ export interface Pokemon {
             name: string;
         };
     }>;
-    // Добавьте другие поля, если они используются
 }
 
 export interface PokemonListProps {
@@ -38,10 +36,10 @@ export interface PaginationProps {
 }
 
 export interface PokemonState {
-    pokemons: Pokemon[]; // массив покемонов
-    pokemonDetails: Pokemon | null; // детали покемона или null
-    status: 'idle' | 'loading' | 'failed'; // статус загрузки
-    totalResults: number; // добавлено новое свойство для общего количества результатов
+    pokemons: Pokemon[];
+    pokemonDetails: Pokemon | null;
+    status: 'idle' | 'loading' | 'failed';
+    totalResults: number;
 }
 
 export interface EvolutionChain {

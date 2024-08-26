@@ -1,12 +1,13 @@
 import React from 'react';
 import { PokemonListProps } from "../models/types";
 import { Link } from 'react-router-dom';
+import {getPokemonImageUrl} from "../utils/api";
 
 const PokemonList: React.FC<PokemonListProps> = ({ pokemons }) => {
     return (
         <div>
             {pokemons.map((pokemon) => {
-                const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+                const imageUrl = getPokemonImageUrl(pokemon.id);
 
                 return (
                     <div key={pokemon.name} className="pokemon-item">

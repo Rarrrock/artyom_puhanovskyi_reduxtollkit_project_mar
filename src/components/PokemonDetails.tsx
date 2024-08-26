@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams, useNavigate, Link } from 'react-router-dom'; // Импорт Link
+import { useParams, useNavigate} from 'react-router-dom';
 import { getPokemonDetails, selectPokemonDetails } from '../features/pokemon/pokemonSlice';
 import { addFavorite, removeFavorite, selectFavorites } from '../features/favorites/favoritesSlice';
 import { useAppDispatch } from '../store/store';
@@ -14,11 +14,7 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     const navigate = useNavigate();
     const favorites = useSelector(selectFavorites);
     const pokemonDetails = useSelector(selectPokemonDetails);
-
-    // Локальное состояние для хранения форм покемона
     const [pokemonForms, setPokemonForms] = useState<string[]>([]);
-
-    // Проверка, находится ли покемон в избранном
     const isFavorite = favorites.some(pokemon => pokemon.id === pokemonDetails?.id);
 
     // Функция для добавления или удаления покемона из избранного
@@ -31,24 +27,12 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
                 dispatch(addFavorite({
                     id: pokemonDetails.id,
                     name: pokemonDetails.name,
-                    sprites: pokemonDetails.sprites, // Добавляем изображения покемона
+                    sprites: pokemonDetails.sprites,
                     types: pokemonDetails.types,
                     abilities: pokemonDetails.abilities,
                 }));
             }
         }
-    };
-
-    const handleFavoritesClick = () => {
-        navigate('/favorites'); // Перенаправление на страницу FavoritesPage
-    };
-
-    const handleBackClick = () => {
-        navigate(-1); // Возвращение на предыдущую страницу
-    };
-
-    const handleHomeClick = () => {
-        navigate('/'); // Перенаправление на домашнюю страницу
     };
 
     useEffect(() => {
@@ -62,7 +46,7 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
             if (pokemonDetails?.name) {
                 try {
                     const forms = await getPokemonFormsByName(pokemonDetails.name);
-                    setPokemonForms(forms); // Устанавливаем формы в состояние
+                    setPokemonForms(forms);
                 } catch (error) {
                     console.error("Error fetching pokemon forms:", error);
                 }
@@ -76,22 +60,16 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
     }
 
     const handleFormClick = async (formName: string) => {
-        const formId = await getPokemonIdByName(formName); // Получаем ID формы покемона по его имени
+        const formId = await getPokemonIdByName(formName);
         if (formId) {
-            navigate(`/pokemon/${formId}`); // Переход к странице покемона по ID
+            navigate(`/pokemon/${formId}`);
         } else {
             console.error(`Could not find ID for form: ${formName}`);
         }
     };
 
-    const handleSearchClick = () => {
-        navigate('/search'); // Navigate to the search page
-    };
-
     return (
         <div>
-            <button onClick={handleHomeClick}>Home</button>
-            <button onClick={handleSearchClick}>Go to Search</button>
             <h1>{pokemonDetails.name}</h1>
             <img src={pokemonDetails.sprites.front_default} alt={pokemonDetails.name} />
             <h2>Types:</h2>
@@ -116,19 +94,13 @@ const PokemonDetails: React.FC<PokemonListProps> = ({ pokemons }) => {
             <ul>
                 {pokemonForms.map((form, index) => (
                     <li key={index}>
-                        <a href="#" onClick={() => handleFormClick(form)}>{form}</a> {/* Кликабельная ссылка для формы */}
+                        <a href="#" onClick={() => handleFormClick(form)}>{form}</a>
                     </li>
                 ))}
             </ul>
             <button onClick={handleFavoriteToggle}>
                 {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
             </button>
-            <div style={{ marginTop: '20px' }}>
-                <button onClick={handleFavoritesClick}>Favorites</button>
-            </div>
-            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-                <button onClick={handleBackClick}>Back</button>
-            </div>
         </div>
     );
 };

@@ -14,14 +14,14 @@ const initialState: PokemonState = {
     pokemons: [],
     pokemonDetails: null,
     status: 'idle',
-    totalResults: 0,  // Добавил состояние для общего количества результатов
+    totalResults: 0,
 };
 
 export const getPokemons = createAsyncThunk(
     'pokemon/fetchPokemons',
     async (page: number) => {
         const response = await fetchPokemons(page);
-        return response;  // Возвращаем непосредственно массив покемонов
+        return response;
     }
 );
 
@@ -40,14 +40,6 @@ export const getPokemonDetailsByName = createAsyncThunk(
         return response;
     }
 );
-
-// export const searchPokemons = createAsyncThunk(
-//     'pokemon/searchPokemons',
-//     async (query: string) => {
-//         const response = await searchPokemonsByName(query);
-//         return [response];  // Возвращаем в виде массива, чтобы соответствовать структуре данных
-//     }
-// );
 
 export const searchPokemons = createAsyncThunk(
     'pokemon/searchPokemons',

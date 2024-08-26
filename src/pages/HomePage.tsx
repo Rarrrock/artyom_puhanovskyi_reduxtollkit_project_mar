@@ -1,20 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import PokemonList from '../components/PokemonList';
 import Pagination from '../components/Pagination/Pagination';
 import BackPagination from '../components/Pagination/BackPagination';
 import FavoritesPagination from '../components/Pagination/FavoritesPagination';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { getPokemons, selectPokemons } from '../features/pokemon/pokemonSlice';
+import {getPokemons, selectPokemons, selectTotalResults} from '../features/pokemon/pokemonSlice';
+import SearchPagination from "../components/Pagination/SearchPagination";
 
 const HomePage: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const dispatch = useAppDispatch();
     const pokemons = useAppSelector(selectPokemons);
-    const navigate = useNavigate(); // Use useNavigate for navigation
+
+    const totalResults = useAppSelector(selectTotalResults);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        // Fetch pokemons for the current page
+        setTotalPages(Math.ceil(totalResults / 20));
+    }, [totalResults]);
+
+    useEffect(() => {
         dispatch(getPokemons(currentPage));
     }, [currentPage, dispatch]);
 
@@ -22,17 +27,14 @@ const HomePage: React.FC = () => {
         setCurrentPage(page);
     };
 
-    const handleSearchClick = () => {
-        navigate('/search'); // Navigate to the search page
-    };
 
     return (
         <div>
-            <button onClick={handleSearchClick}>Go to Search</button>
+            <SearchPagination />
             <BackPagination />
             <Pagination
                 currentPage={currentPage}
-                totalPages={Math.ceil(2000 / 20)}
+                totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
             <FavoritesPagination />
@@ -40,7 +42,7 @@ const HomePage: React.FC = () => {
             <BackPagination />
             <Pagination
                 currentPage={currentPage}
-                totalPages={Math.ceil(2000 / 20)}
+                totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
             <FavoritesPagination />

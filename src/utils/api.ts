@@ -2,29 +2,32 @@ import axios from 'axios';
 import React from "react";
 
 export const API_URL = 'https://pokeapi.co/api/v2';
+export const getPokemonImageUrl = (id: number): string => {
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+};
 
 export const fetchPokemons = async (page: number) => {
     const response = await axios.get(`${API_URL}/pokemon`, {
         params: {
-            limit: 10,
-            offset: (page - 1) * 10,
+            limit: 20,
+            offset: (page - 1) * 20,
         },
     });
     return response.data.results.map((pokemon: any) => ({
         ...pokemon,
-        id: pokemon.url.split('/').filter(Boolean).pop(), // Извлечение ID из URL
+        id: pokemon.url.split('/').filter(Boolean).pop(),
     }));
 };
 
 export const getTotalPages = async () => {
     const response = await axios.get(`${API_URL}/pokemon`, {
         params: {
-            limit: 10,
+            limit: 20,
             offset: 0,
         },
     });
     const totalPokemons = response.data.count;
-    const totalPages = Math.ceil(totalPokemons / 10);
+    const totalPages = Math.ceil(totalPokemons / 20);
     return totalPages;
 };
 
@@ -41,11 +44,10 @@ export const fetchPokemonDetailsByName = async (name: string) => {
 export const searchPokemonsByName = async (query: string) => {
     try {
         const response = await axios.get(`${API_URL}/pokemon/${query}`);
-        // Возможно, API возвращает просто один покемон, а не список
-        return { results: [response.data] }; // Оборачиваем в массив, если это один объект
+        return { results: [response.data] };
     } catch (error) {
         console.error('Failed to search Pokémon by name', error);
-        return { results: [] }; // Возвращаем пустой массив, если ошибка
+        return { results: [] };
     }
 };
 
@@ -89,4 +91,4 @@ export const goToCurrentPage = (handlePageChange: (newPage: number) => void, cur
 export const goToFavorites = (navigate: (path: string) => void) => () => navigate('/favorites');
 export const goToHome = (navigate: (path: string) => void) => () => navigate('/');
 export const goBack = (navigate: (delta: number) => void) => () => navigate(-1);
-
+export const goToSearch = (navigate: (path: string) => void) => () => navigate('/search');
