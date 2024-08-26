@@ -6,7 +6,25 @@ export interface PokemonSprites {
 export interface Pokemon {
     id: number;
     name: string;
-    sprites?: PokemonSprites;
+    sprites: {
+        front_default: string;
+    };
+    types: Array<{
+        type: {
+            name: string;
+        };
+    }>;
+    abilities: Array<{
+        ability: {
+            name: string;
+        };
+    }>;
+    stats: Array<{
+        stat: {
+            name: string;
+        };
+    }>;
+    // Добавьте другие поля, если они используются
 }
 
 export interface PokemonListProps {
@@ -20,9 +38,10 @@ export interface PaginationProps {
 }
 
 export interface PokemonState {
-    pokemons: any[];
-    pokemonDetails: any | null;
-    status: 'idle' | 'loading' | 'failed';
+    pokemons: Pokemon[]; // массив покемонов
+    pokemonDetails: Pokemon | null; // детали покемона или null
+    status: 'idle' | 'loading' | 'failed'; // статус загрузки
+    totalResults: number; // добавлено новое свойство для общего количества результатов
 }
 
 export interface EvolutionChain {

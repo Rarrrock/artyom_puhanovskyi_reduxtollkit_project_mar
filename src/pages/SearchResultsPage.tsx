@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/store';
-import { selectPokemons, searchPokemons } from '../features/pokemon/pokemonSlice';
+import { selectPokemons, searchPokemons, selectTotalResults } from '../features/pokemon/pokemonSlice';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Pagination from '../components/Pagination/Pagination';
 import BackPagination from '../components/Pagination/BackPagination';
-import SearchForm from '../components/SearchForm'; // Компонент формы поиска
+import SearchForm from '../components/SearchForm';
 import { Link } from 'react-router-dom';
 
 const SearchResultsPage = () => {
     const dispatch = useAppDispatch();
     const pokemons = useAppSelector(selectPokemons);
+    const totalResults = useAppSelector(selectTotalResults);
     const location = useLocation();
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState(1);
     const [query, setQuery] = useState('');
     const [filterType, setFilterType] = useState('');
     const [filterAbility, setFilterAbility] = useState('');
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -33,6 +35,11 @@ const SearchResultsPage = () => {
         }
     }, [dispatch, location.search, currentPage]);
 
+    useEffect(() => {
+        // Устанавливаем общее количество страниц на основе количества покемонов (максимум 20 на странице)
+        setTotalPages(Math.ceil(totalResults / 20));
+    }, [totalResults]);
+
     const handleSearch = (query: string, type: string, ability: string) => {
         // Устанавливаем параметры поиска в URL
         const params = new URLSearchParams();
@@ -46,7 +53,13 @@ const SearchResultsPage = () => {
         setCurrentPage(page);
     };
 
-    console.log('Pokemons:', pokemons); // Добавьте это для отладки
+    console.log('Pokemons:', pokemons); // Отладка
+
+    // Формирование строки запроса для заголовка
+    const searchString = `${query ? `Name: "${query}"` : ''} ${filterType ? `Type: "${filterType}"` : ''} ${filterAbility ? `Ability: "${filterAbility}"` : ''}`.trim();
+
+    // Ограничиваем количество отображаемых покемонов до 20 на текущей странице
+    const paginatedPokemons = pokemons.slice((currentPage - 1) * 20, currentPage * 20);
 
     return (
         <div>
@@ -54,12 +67,18 @@ const SearchResultsPage = () => {
             <BackPagination />
             <button onClick={() => navigate('/')}>Home</button>
             <button onClick={() => navigate('/favorites')}>Favorites</button>
-            <h2>Search Results</h2>
+            <h2>
+                Search Results for {searchString && searchString}
+            </h2>
             {/* Убедитесь, что результаты отображаются */}
             <div>
-                {pokemons.length === 0 ? <p>No pokemons found</p> : <p>Displaying {pokemons.length} pokemons</p>}
+                {totalResults === 0 ? (
+                    <p>No pokemons found</p>
+                ) : (
+                    <p>Displaying {totalResults} pokemons</p> // Здесь показываем общее количество результатов
+                )}
                 <ul>
-                    {pokemons.map((pokemon) => {
+                    {paginatedPokemons.map((pokemon) => {
                         const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
                         return (
                             <li key={pokemon.id}>
@@ -82,7 +101,7 @@ const SearchResultsPage = () => {
             </div>
             <Pagination
                 currentPage={currentPage}
-                totalPages={10} // Замените на фактическое значение
+                totalPages={totalPages}
                 onPageChange={handlePageChange}
             />
             <BackPagination />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { PokemonListProps } from '../models/types';
 
-const PokemonList: React.FC<PokemonListProps> = ({ pokemons }) => {
+const PokemonSearchList: React.FC<PokemonListProps> = ({ pokemons }) => {
     return (
         <div className="pokemon-list">
             {pokemons.map((pokemon) => (
@@ -16,4 +16,4 @@ const PokemonList: React.FC<PokemonListProps> = ({ pokemons }) => {
     );
 };
 
-export default PokemonList;
+export default PokemonSearchList;

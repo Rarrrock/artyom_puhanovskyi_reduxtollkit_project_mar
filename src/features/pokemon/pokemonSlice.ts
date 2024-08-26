@@ -14,6 +14,7 @@ const initialState: PokemonState = {
     pokemons: [],
     pokemonDetails: null,
     status: 'idle',
+    totalResults: 0,  // Добавил состояние для общего количества результатов
 };
 
 export const getPokemons = createAsyncThunk(
@@ -60,10 +61,10 @@ export const searchPokemons = createAsyncThunk(
                 const response = await searchPokemonsByName(query);
                 console.log('Search by name response:', response);
 
-                // Убедитесь, что response содержит results и что это массив
+                // Используем регулярное выражение для поиска по частям слов
                 if (Array.isArray(response.results)) {
                     filteredPokemons = response.results.filter((pokemon: Pokemon) =>
-                        pokemon.name.toLowerCase().includes(query.toLowerCase())
+                        new RegExp(query, 'i').test(pokemon.name)
                     );
                 } else {
                     console.error('Response does not contain results or results is not an array:', response);
@@ -87,10 +88,13 @@ export const searchPokemons = createAsyncThunk(
             );
 
             console.log('Detailed pokemons:', detailedPokemons);
-            return detailedPokemons;
+            return {
+                results: detailedPokemons,
+                totalResults: detailedPokemons.length,  // Возвращаем также общее количество найденных покемонов
+            };
         } catch (error) {
             console.error('Error in searchPokemons:', error);
-            return [];
+            return { results: [], totalResults: 0 };
         }
     }
 );
@@ -126,7 +130,8 @@ export const pokemonSlice = createSlice({
             })
             .addCase(searchPokemons.fulfilled, (state, action) => {
                 state.status = 'idle';
-                state.pokemons = action.payload;
+                state.pokemons = action.payload.results;  // Сохраняем результаты поиска
+                state.totalResults = action.payload.totalResults;  // Сохраняем общее количество найденных покемонов
             })
             .addCase(searchPokemons.rejected, (state) => {
                 state.status = 'failed';
@@ -136,6 +141,7 @@ export const pokemonSlice = createSlice({
 
 export const selectPokemons = (state: RootState) => state.pokemon.pokemons;
 export const selectPokemonDetails = (state: RootState) => state.pokemon.pokemonDetails;
+export const selectTotalResults = (state: RootState) => state.pokemon.totalResults;
 
 export const getPokemonIdByName = async (name: string): Promise<number | undefined> => {
     try {
